@@ -2,7 +2,7 @@
 
 /*
  * $Id: Ship2Pay
- * modified by design75
+ * modified by Zen4All
  */
 
 define('HEADING_TITLE', 'Ship 2 Pay');
