@@ -20,4 +20,7 @@ define('TEXT_INFO_PAYMENTS', '<b>Mo¿liwe formy p³atno¶ci dla wybranej metody prz
 define('TEXT_INFO_HEADING_EDIT_SHP2PAY', 'Edycja Ship 2 Pay');
 define('TEXT_INFO_HEADING_NEW_SHP2PAY', 'Nowy Ship 2 Pay');
 define('TEXT_INFO_HEADING_DELETE_SHP2PAY', 'Usuñ Ship 2 Pay');
+
+define('BOX_MODULES_SHIP2PAY', 'Ship 2 Pay');
+define('TEXT_DISPLAY_NUMBER_OF_PAYMENTS', 'Displaying <b>%d</b> to <b>%d</b> (of <b>%d</b> ship 2 pay)');
 ?>
