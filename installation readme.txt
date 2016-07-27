@@ -1,5 +1,5 @@
 ------------------------------------------
-  $Id: Ship2Pay,v 1.7 2014-06-24 Zen4All/Design75
+  $Id: Ship2Pay,v 1.8 2016-07-27 Zen4All/Design75
 Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-thread
 
 -> based on :
@@ -48,6 +48,14 @@ Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-
   changed: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
   added: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
 
+-> V 1.8- 2016-07-27 Zen4All/Design75
+  tested on: Zen Cart 1.5.x
+
+Updated files to be compatible with php 7.
+Removed Polish language files, because I am not able to provide support for them.
+Updated control panel file
+Added Zen Cart 1.5.5a overwrite file for "includes/classes/payment.php"
+
   ------------------------------------------
 
 
@@ -80,7 +88,6 @@ file-list:
 - /YOUR_ADMIN/includes/extra_datafiles/ship2pay_filenames.php
 - /YOUR_ADMIN/includes/languages/english/extra_definitions/ship2pay.php
 - /YOUR_ADMIN/includes/languages/dutch/extra_definitions/ship2pay.php
-- /YOUR_ADMIN/includes/languages/polish/extra_definitions/ship2pay.php
 - /includes/classes/ship2pay.php
 - /includes/extra_datafiles/ship2pay_database_names.php
 ***
@@ -88,7 +95,7 @@ file-list:
  |  Modify file:
 -+------------------
 5. Open the file /includes/classes/payment.php
-
+When using Zen Cart 1.5.5a You can skip tis step and use the file prvided in the folder "Core file overrides"
 Find the following line: (about line #28)
       $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
 replace that single line with:
@@ -110,14 +117,6 @@ replace that single line with:
 Go to the admin -> modules -> ship2pay and setup your ship2pay settings
 
 #######################
-
-That's it... I hope ;-)
-
-
-
-DISCLAIMER:
-------------------------------------------
-If this should, for any reason, mess up something, which this should not be the cause of, you cannot hold me responsible.  If you should choose to use this, you agree to not hold me responsible.
 
 UNINSTALLATION:
 ------------------------------------------
