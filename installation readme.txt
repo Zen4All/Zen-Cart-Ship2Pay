@@ -1,5 +1,5 @@
 ------------------------------------------
-  $Id: Ship2Pay,v 1.6 2014-05-02 Zen4All/Design75
+  $Id: Ship2Pay,v 1.7 2014-06-24 Zen4All/Design75
 Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-thread
 
 -> based on :
@@ -40,6 +40,13 @@ Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-
   updated: admin/ship2pay.php code cleaning so it is up to Zen Cart 1.5.1 standard
   updated: install.sql A statement was added so a link is added to the Modules menu
   updated: installation instructions
+
+-> V 1.7- 2014-06-24 Zen4All/Design75
+  tested on: Zen Cart 1.5.x
+  
+  Admin language files have been updated, to prevent the module title form showing up in other locations then this module
+  changed: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
+  added: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
 
   ------------------------------------------
 
