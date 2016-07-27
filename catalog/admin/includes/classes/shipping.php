@@ -10,7 +10,7 @@
 // class constructor
     function shipping() {
 
-      if (defined('MODULE_SHIPPING_INSTALLED') && tep_not_null(MODULE_SHIPPING_INSTALLED)) {
+      if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
         $allmods = explode(';', MODULE_SHIPPING_INSTALLED);
         
         $this->modules = array();

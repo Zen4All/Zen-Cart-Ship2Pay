@@ -10,7 +10,7 @@
 // class constructor
     function payment() {
 
-      if (defined('MODULE_PAYMENT_INSTALLED') && tep_not_null(MODULE_PAYMENT_INSTALLED)) {
+      if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
         $allmods = explode(';', MODULE_PAYMENT_INSTALLED);
         
         $this->modules = array();
