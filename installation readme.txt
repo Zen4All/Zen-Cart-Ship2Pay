@@ -1,5 +1,5 @@
 ------------------------------------------
-  $Id: Ship2Pay,v 1.8 2016-07-27 Zen4All/Design75
+  $Id: Ship2Pay,v 1.8 2017-07-13 Zen4All/Design75
 Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-thread
 
 -> based on :
@@ -48,26 +48,26 @@ Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-
   changed: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
   added: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
 
--> V 1.8- 2016-07-27 Zen4All/Design75
-  tested on: Zen Cart 1.5.x
+-> V 1.8- 2017-07-13 Zen4All/Design75
+  tested on: Zen Cart 1.5.5, but should work on all 1.5.x distrobutions.
 
-Updated files to be compatible with php 7.
-Removed Polish language files, because I am not able to provide support for them.
-Updated control panel file
-Added Zen Cart 1.5.5a overwrite file for "includes/classes/payment.php"
+  Fixed bug in install.sql
+  Updated files to be compatible with php 7.0
+  Removed Polish language files, because I am not able to provide support for them.
+  Updated control panel file
+  Added Zen Cart 1.5.5e overwrite file for "includes/classes/payment.php"
 
   ------------------------------------------
 
 
-SUMMARY:  (original description)
+SUMMARY:
 ------------------------------------------
 Limit the number of payment options depending on the chosen shipping method.
-For example When a customer chooses pickup at store he should be able to select cash on pickup or moneyorder and when he chooses flat rate shipping he should be able to select cash on delivery or moneyorder.
+For example When a customer chooses pickup at store he should be able to select cash on pickup or money-order and when he chooses flat rate shipping he should be able to select cash on delivery or moneyorder.
 
 After installation, go to the admin > modules and click on ship 2 pay
 insert your links between shipping and payment.
 If you don't specify any link, the code will work as before.
-I know that the admin could be easier, but i think this is fairly good as it is my first contribution.
 
 
 
@@ -76,7 +76,7 @@ I know that the admin could be easier, but i think this is fairly good as it is 
 -+----------------------------------------
 1. Unzip to a folder of your choice.
 2. Rename the YOUR_ADMIN folder to the name of your admin folder
-3. Copy the files to your server. 
+3. Copy the files to your server.
 4. Use phpmyadmin, or the built-in sql patch page to update you Database with the contents of install.sql
 
 ***
@@ -95,7 +95,7 @@ file-list:
  |  Modify file:
 -+------------------
 5. Open the file /includes/classes/payment.php
-When using Zen Cart 1.5.5a You can skip tis step and use the file prvided in the folder "Core file overrides"
+When using Zen Cart 1.5.5e You can skip this step and use the file provided in the folder "Core file overrides"
 Find the following line: (about line #28)
       $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
 replace that single line with:
@@ -118,6 +118,6 @@ Go to the admin -> modules -> ship2pay and setup your ship2pay settings
 
 #######################
 
-UNINSTALLATION:
+UN-INSTALLATION:
 ------------------------------------------
 Reverse the installation steps, and use the uninstall.sql
