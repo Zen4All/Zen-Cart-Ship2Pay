@@ -51,7 +51,7 @@ Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-
 -> V 1.8- 2017-07-13 Zen4All/Design75
   tested on: Zen Cart 1.5.5, but should work on all 1.5.x distrobutions.
 
-  Fixed bux in install.sql
+  Fixed bug in install.sql
   Updated files to be compatible with php 7.0
   Removed Polish language files, because I am not able to provide support for them.
   Updated control panel file
