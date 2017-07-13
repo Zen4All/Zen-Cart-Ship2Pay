@@ -1,6 +1,6 @@
 # Zen-Cart-Ship2Pay
 
-Ship2Pay,v 1.8 2016-07-27 Zen4All/Design75
+Ship2Pay,v 1.8 2017-07-13 Zen4All/Design75
 Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-thread
 
 * based on :
@@ -52,13 +52,13 @@ Support thread: https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-
   changed: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php<br>
   added: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php
 
-* V 1.8- 2016-07-27 Zen4All/Design75
-  tested on: Zen Cart 1.5.x
-
+* V 1.8- 2017-07-13 Zen4All/Design75
+  tested on: Zen Cart 1.5.5, but should work on all 1.5.x distrobutions.<br>
+  Fixed bux in install.sql<br>
   Updated files to be compatible with php 7.0<br>
   Removed Polish language files, because I am not able to provide support for them.<br>
   Updated control panel file<br>
-  Added Zen Cart 1.5.5a overwrite file for "includes/classes/payment.php"
+  Added Zen Cart 1.5.5e overwrite file for "includes/classes/payment.php"
 
 ------------------------------------------
 
@@ -79,6 +79,7 @@ If you don't specify any link, the code will work as before.
 1. Unzip to a folder of your choice.
 2. Rename the YOUR_ADMIN folder to the name of your admin folder
 3. Copy the files to your server.
+4. Use phpmyadmin, or the built-in sql patch page to update you Database with the contents of install.sql
   * file-list:
     - /YOUR_ADMIN/ship2pay.php
     - /YOUR_ADMIN/includes/classes/ship2pay_payment.php
@@ -92,7 +93,7 @@ If you don't specify any link, the code will work as before.
 
   * Modify file:<br>
 Open the file /includes/classes/payment.php<br>
-When using Zen Cart 1.5.5a You can skip this step and use the file provided in the folder "Core file overrides"<br>
+When using Zen Cart 1.5.5e You can skip this step and use the file provided in the folder "Core file overrides"<br>
 Find the following line: (about line 28)<br>
   ```php
   $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
@@ -113,8 +114,7 @@ Find the following line: (about line 28)<br>
   }
   //EOF ship2pay
   ```
-      
-4. Use phpmyadmin, or the built-in sql patch page to update you Database with the contents of install.sql
+
 5. Go to the admin -> modules -> ship2pay and setup your ship2pay settings
 
 ## UN-INSTALLATION:
