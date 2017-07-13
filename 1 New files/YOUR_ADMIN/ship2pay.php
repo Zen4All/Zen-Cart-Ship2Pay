@@ -33,13 +33,13 @@ if (zen_not_null($action)) {
       zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page']));
       break;
     case 'disable':
-      $shp_id = zen_db_prepare_input($_GET['s2p_id']);
-      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 0 where s2p_id = " . zen_db_input($shp_id));
+      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
+      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 0 where s2p_id = " . zen_db_input($s2p_id));
       zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p_id));
       break;
     case 'enable':
-      $shp_id = zen_db_prepare_input($_GET['s2p_id']);
-      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 1 where s2p_id = " . zen_db_input($shp_id));
+      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
+      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 1 where s2p_id = " . zen_db_input($s2p_id));
       zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p_id));
       break;
   }
@@ -121,7 +121,7 @@ if (zen_not_null($action)) {
                             if ($s2p->fields['status'] == '1') {
                               echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id'] . '&action=disable') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
                             } else {
-                              echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id'] . '&action=enable') . '">' . zen_image(DIR_WS_IMAGES . 'icon_status_red.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
+                              echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id'] . '&action=enable') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
                             }
                             ?>
                           </td>
