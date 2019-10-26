@@ -104,9 +104,9 @@ $s2p = $db->Execute($s2p_query_raw);
                   <td class="dataTableContent"><?php echo $cPay->GetModuleName($item['payments_allowed']); ?></td>
                   <td class="dataTableContent text-center">
                       <?php if ($item['status'] == '1') { ?>
-                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . (int)$_GET['page'] . '&s2p_id=' . $item['s2p_id'] . '&action=disable'); ?>"><?php echo zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON); ?></a>
+                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . (int)$_GET['page'] . '&s2p_id=' . $item['s2p_id'] . '&action=disable'); ?>"><i class="fa fa-circle fa-2x" style="color:#72AA00;" aria-hidden="true"></i></a>
                     <?php } else { ?>
-                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . (int)$_GET['page'] . '&s2p_id=' . $item['s2p_id'] . '&action=enable'); ?>"><?php echo zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF); ?></a>
+                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . (int)$_GET['page'] . '&s2p_id=' . $item['s2p_id'] . '&action=enable'); ?>"><i class="fa fa-circle fa-2x" style="color:#EA5507;" aria-hidden="true"></i></a>
                     <?php } ?>
                   </td>
                   <td class="dataTableContent text-right">
