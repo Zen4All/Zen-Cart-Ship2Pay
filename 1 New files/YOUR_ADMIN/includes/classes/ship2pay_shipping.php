@@ -32,7 +32,6 @@ class shipping {
 
   function shipping_select($parameters, $selected = '')
   {
-    echo $selected;
     $select_string = '<select ' . $parameters . '>';
     for ($i = 0, $n = sizeof($this->modules); $i < $n; $i++) {
       $select_string .= '<option value="' . $this->modules[$i]['class'] . '"';
