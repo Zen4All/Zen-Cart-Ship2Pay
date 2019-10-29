@@ -36,7 +36,7 @@ class shipping {
     for ($i = 0, $n = sizeof($this->modules); $i < $n; $i++) {
       $select_string .= '<option value="' . $this->modules[$i]['class'] . '"';
       if ($selected == $this->modules[$i]['class']) {
-        $select_string .= ' SELECTED';
+        $select_string .= ' selected';
       }
       $select_string .= '>' . $this->modules[$i]['class'] . '</option>';
     }

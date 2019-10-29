@@ -49,8 +49,8 @@ class payment {
 
   function GetModuleName($sSelected)
   {
-    $sNames = str_replace(".php", "", $sSelected);
-    $sNames = str_replace(";", ",&nbsp;", $sNames);
+    $sNames1 = str_replace(".php", "", $sSelected);
+    $sNames = str_replace(";", ",&nbsp;", $sNames1);
     return $sNames;
   }
 
