@@ -26,18 +26,19 @@ class payment extends base {
     $this->doesCollectsCardDataOnsite = false;
 
     if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
-      //BOF Ship2pay
-      //  $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
+      /* BOF Ship2pay 1 of 2 */
       require (DIR_WS_CLASSES . 'ship2pay.php');
       $my_ship2pay = new ship2pay;
-      $arrship = explode('_',$_SESSION['shipping']['id']);
+      $arrship = explode('_', $_SESSION['shipping']['id']);
       $ship2pay_mods = $my_ship2pay->get_pay_modules($arrship[0]);
       if (zen_not_null($ship2pay_mods)) {
         $this->modules = explode(';', $ship2pay_mods);
       } else {
+        /* EOF ship2pay 1 of 2 */
         $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
+        /* BOF Ship2pay 2 of 2 */
       }
-      //EOF ship2pay
+      /* EOF ship2pay 2 of 2 */
 
       $include_modules = array();
 
