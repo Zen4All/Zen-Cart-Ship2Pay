@@ -10,18 +10,20 @@ class ship2pay {
 
   var $modules;
 
-  function __construct() {
+  function __construct()
+  {
     global $db;
     $this->modules = array();
-    $mods = $db->Execute("SELECT shipment, payments_allowed FROM " . TABLE_SHIP2PAY . " WHERE status = 1");
-    while (!$mods->EOF) {
-      $this->modules[$mods->fields['shipment']] = $mods->fields['payments_allowed'];
-
-      $mods->MoveNext();
+    $modules = $db->Execute("SELECT shipment, payments_allowed
+                             FROM " . TABLE_SHIP2PAY . "
+                             WHERE status = 1");
+    foreach ($modules as $module) {
+      $this->modules[$module['shipment']] = $module['payments_allowed'];
     }
   }
 
-  function get_pay_modules($ship_module) {
+  function get_pay_modules($ship_module)
+  {
     return $this->modules[$ship_module];
   }
 

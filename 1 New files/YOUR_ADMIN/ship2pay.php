@@ -8,215 +8,184 @@ require(DIR_WS_CLASSES . 'ship2pay_shipping.php');
 $cShip = new shipping;
 require(DIR_WS_CLASSES . 'ship2pay_payment.php');
 $cPay = new payment;
+$current_page = (int)$_GET['page'];
 if (zen_not_null($action)) {
   switch ($action) {
     case 'insert':
       $shp_id = zen_db_prepare_input($_POST['shp_id']);
-      if (isset($_POST['pay_ids'])) {
+      if (!empty($_POST['pay_ids'])) {
         $pay_ids = zen_db_prepare_input(implode(";", $_POST['pay_ids']));
       }
-      $db->Execute("insert into " . TABLE_SHIP2PAY . " (shipment, payments_allowed,status) values ('" . zen_db_input($shp_id) . "', '" . zen_db_input($pay_ids) . "',0)");
+      $db->Execute("INSERT INTO " . TABLE_SHIP2PAY . " (shipment, payments_allowed,status)
+                    VALUES ('" . zen_db_input($shp_id) . "', '" . zen_db_input($pay_ids) . "',0)");
       zen_redirect(zen_href_link(FILENAME_SHIP2PAY));
       break;
     case 'save':
-      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
+      $s2p_id = (int)$_GET['s2p_id'];
       $shp_id = zen_db_prepare_input($_POST['shp_id']);
-      if (isset($_POST['pay_ids'])) {
+      if (!empty($_POST['pay_ids'])) {
         $pay_ids = zen_db_prepare_input(implode(";", $_POST['pay_ids']));
       }
-      $db->Execute("update " . TABLE_SHIP2PAY . " set payments_allowed = '" . zen_db_input($pay_ids) . "', shipment = '" . zen_db_input($shp_id) . "' where s2p_id = " . zen_db_input($s2p_id));
-      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p_id));
+      $db->Execute("UPDATE " . TABLE_SHIP2PAY . "
+                    SET payments_allowed = '" . zen_db_input($pay_ids) . "',
+                        shipment = '" . zen_db_input($shp_id) . "'
+                    WHERE s2p_id = " . $s2p_id);
+      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $s2p_id));
       break;
     case 'deleteconfirm':
-      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
-      $db->Execute("delete from " . TABLE_SHIP2PAY . " where s2p_id = " . zen_db_input($s2p_id));
-      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page']));
+      $s2p_id = (int)$_GET['s2p_id'];
+      $db->Execute("DELETE FROM " . TABLE_SHIP2PAY . " WHERE s2p_id = " . $s2p_id);
+      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page));
       break;
     case 'disable':
-      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
-      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 0 where s2p_id = " . zen_db_input($s2p_id));
-      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p_id));
+      $s2p_id = (int)$_GET['s2p_id'];
+      $db->Execute("UPDATE " . TABLE_SHIP2PAY . "
+                    SET status = 0
+                    WHERE s2p_id = " . $s2p_id);
+      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $s2p_id));
       break;
     case 'enable':
-      $s2p_id = zen_db_prepare_input($_GET['s2p_id']);
-      $db->Execute("update " . TABLE_SHIP2PAY . " set status = 1 where s2p_id = " . zen_db_input($s2p_id));
-      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p_id));
+      $s2p_id = (int)$_GET['s2p_id'];
+      $db->Execute("UPDATE " . TABLE_SHIP2PAY . "
+                    SET status = 1
+                    WHERE s2p_id = " . $s2p_id);
+      zen_redirect(zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $s2p_id));
       break;
   }
 }
+
+$s2p_query_raw = "SELECT s2p_id, shipment, payments_allowed, status
+                  FROM " . TABLE_SHIP2PAY . "
+                  ORDER BY shipment";
+$s2p_split = new splitPageResults($current_page, MAX_DISPLAY_SEARCH_RESULTS, $s2p_query_raw, $s2p_query_numrows);
+$s2p = $db->Execute($s2p_query_raw);
 ?>
 <!doctype html>
 <html <?php echo HTML_PARAMS; ?>>
   <head>
     <meta charset="<?php echo CHARSET; ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1">
     <title><?php echo TITLE; ?></title>
-    <link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
-    <link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
-    <script type="text/javascript" src="includes/menu.js"></script>
-    <script type="text/javascript" src="includes/general.js"></script>
-    <script type="text/javascript">
-      <!--
-      function init()
-      {
-        cssjsmenu('navbar');
-        if (document.getElementById)
-        {
-          var kill = document.getElementById('hoverJS');
-          kill.disabled = true;
-        }
-      }
-      // -->
-    </script>
+    <link rel="stylesheet" href="includes/stylesheet.css">
+    <script src="includes/general.js"></script>
   </head>
-  <body onLoad="init()">
+  <body>
     <!-- header //-->
     <?php require(DIR_WS_INCLUDES . 'header.php'); ?>
     <!-- header_eof //-->
     <!-- body //-->
-    <table style="width:100%;padding: 2px;margin: 2px">
-      <tr>
-        <!-- body_text //-->
-        <td style="width:100%;vertical-align: top">
-          <table style="width:100%;padding: 2px;margin: 0">
-            <tr>
-              <td style="width: 100%">
-                <table style="width:100%;padding: 0;margin: 0">
-                  <tr>
-                    <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-                    <td class="pageHeading" style="text-align: right"><?php echo zen_draw_separator('pixel_trans.gif', HEADING_IMAGE_WIDTH, HEADING_IMAGE_HEIGHT); ?></td>
-                  </tr>
-                </table></td>
-            </tr>
-            <tr>
-              <td>
-                <table style="width:100%;padding: 0;margin: 0">
-                  <tr>
-                    <td style="vertical-align: top">
-                      <table style="width:100%;padding: 2px;margin: 0">
-                        <tr class="dataTableHeadingRow">
-                          <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_SHIPMENT; ?></td>
-                          <td class="dataTableHeadingContent"><?php echo TABLE_HEADING_PAYMENTS; ?></td>
-                          <td class="dataTableHeadingContent" style="text-align: center"><?php echo TABLE_HEADING_STATUS; ?></td>
-                          <td class="dataTableHeadingContent" style="text-align: right"><?php echo TABLE_HEADING_ACTION; ?>&nbsp;</td>
-                        </tr>
-                        <?php
-                        $s2p_query_raw = "SELECT s2p_id, shipment, payments_allowed, status FROM " . TABLE_SHIP2PAY . " ORDER BY shipment";
-                        $s2p_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $s2p_query_raw, $s2p_query_numrows);
-                        $s2p = $db->Execute($s2p_query_raw);
-                        while (!$s2p->EOF) {
-                          if ((!isset($_GET['s2p_id']) || (isset($_GET['s2p_id']) && ($_GET['s2p_id'] == $s2p->fields['s2p_id']))) && !isset($trInfo) && (substr($action, 0, 3) != 'new')) {
-                            $trInfo = new objectInfo($s2p->fields);
-                          }
-
-                          if (isset($trInfo) && is_object($trInfo) && ($s2p->fields['s2p_id'] == $trInfo->s2p_id)) {
-                            echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id . '&action=edit') . '\'">' . "\n";
-                          } else {
-                            echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id']) . '\'">' . "\n";
-                          }
-                          ?>
-                          <td class="dataTableContent">&nbsp;<?php echo $s2p->fields['shipment']; ?></td>
-                          <td class="dataTableContent"><?php echo $cPay->GetModuleName($s2p->fields['payments_allowed']); ?></td>
-                          <td class="dataTableContent" style="text-align: center">
-                            <?php
-                            if ($s2p->fields['status'] == '1') {
-                              echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id'] . '&action=disable') . '">' . zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) . '</a>';
-                            } else {
-                              echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id'] . '&action=enable') . '">' . zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF) . '</a>';
-                            }
-                            ?>
-                          </td>
-                          <td class="dataTableContent" style="text-align: right"><?php
-                          if ((is_object($trInfo)) && ($s2p->fields['s2p_id'] == $trInfo->s2p_id)) {
-                            echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif', '');
-                          } else {
-                            echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $s2p->fields['s2p_id']) . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>';
-                          }
-                            ?>
-                            &nbsp;
-                          </td>
-                    </tr>
-                    <?php
-                    $s2p->MoveNext();
-                  }
-                  ?>
-                  <tr>
-                    <td colspan="3">
-                      <table style="width:100%;padding: 2px;margin: 0">
-                        <tr>
-                          <td class="smallText" style="vertical-align: top"><?php echo $s2p_split->display_count($s2p_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PAYMENTS); ?></td>
-                          <td class="smallText" style="text-align: right"><?php echo $s2p_split->display_links($s2p_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page']); ?></td>
-                        </tr>
-                        <?php
-                        if (empty($action)) {
-                          ?>
-                          <tr>
-                            <td style="text-align: right" colspan="2"><?php echo '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&action=new') . '">' . zen_image_button('button_insert.gif', IMAGE_INSERT) . '</a>'; ?></td>
-                          </tr>
-                          <?php
-                        }
-                        ?>
-                      </table>
-                    </td>
-                  </tr>
-                </table></td>
+    <div class="container-fluid">
+      <!-- body_text //-->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h1 class="panel-title"><?php echo HEADING_TITLE; ?></h1>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 configurationColumnLeft">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr class="dataTableHeadingRow">
+                <th class="dataTableHeadingContent"><?php echo TABLE_HEADING_SHIPMENT; ?></th>
+                <th class="dataTableHeadingContent"><?php echo TABLE_HEADING_PAYMENTS; ?></th>
+                <th class="dataTableHeadingContent text-center"><?php echo TABLE_HEADING_STATUS; ?></th>
+                <th class="dataTableHeadingContent text-right"><?php echo TABLE_HEADING_ACTION; ?></th>
+              </tr>
+            </thead>
+            <tbody>
               <?php
-              $heading = array();
-              $contents = array();
-              switch ($action) {
-                case 'new':
-                  $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_NEW_SHP2PAY . '</b>');
-                  $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&action=insert'));
-                  $contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
-                  $contents[] = array('text' => '<br>' . TEXT_INFO_SHIPMENT . '<br>' . $cShip->shipping_select('name="shp_id"'));
-                  $contents[] = array('text' => '<br>' . TEXT_INFO_PAYMENTS . '<br>' . $cPay->payment_multiselect('name="pay_ids[]"'));
-                  $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_insert.gif', IMAGE_INSERT) . '&nbsp;<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page']) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
-                  break;
-                case 'edit':
-                  $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_EDIT_SHP2PAY . '</b>');
-                  $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id . '&action=save'));
-                  $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
-                  $contents[] = array('text' => '<br>' . TEXT_INFO_SHIPMENT . '<br>' . $cShip->shipping_select('name="shp_id"', $trInfo->shipment));
-                  $contents[] = array('text' => '<br>' . TEXT_INFO_PAYMENTS . '<br>' . $cPay->payment_multiselect('name="pay_ids[]"', $trInfo->payments_allowed));
-                  $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE) . '&nbsp;<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
-                  break;
-                case 'delete':
-                  $heading[] = array('text' => '<b>' . TEXT_INFO_HEADING_DELETE_SHP2PAY . '</b>');
-                  $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id . '&action=deleteconfirm'));
-                  $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
-                  $contents[] = array('text' => '<br><b>' . $trInfo->shipment . ' >> ' . $cPay->GetModuleName($trInfo->payments_allowed) . '</b>');
-                  $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_module_remove.gif', IMAGE_DELETE) . '&nbsp;<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id) . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
-                  break;
-                default:
-                  if (is_object($trInfo)) {
-                    $heading[] = array('text' => '<b>' . $trInfo->shipment . '</b>');
-                    $contents[] = array('align' => 'center', 'text' => '</a> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id . '&action=delete') . '">' . zen_image_button('button_module_remove.gif', IMAGE_DELETE) . '</a> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $_GET['page'] . '&s2p_id=' . $trInfo->s2p_id . '&action=edit') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT));
-                    $contents[] = array('text' => '<br>' . TEXT_INFO_PAYMENTS_ALLOWED . '<br><b>' . $cPay->GetModuleName($trInfo->payments_allowed) . '</b>');
-                  }
-                  break;
-              }
+              foreach ($s2p as $item) {
+                if ((!isset($_GET['s2p_id']) || (isset($_GET['s2p_id']) && ($_GET['s2p_id'] == $item['s2p_id']))) && !isset($s2pInfo) && (substr($action, 0, 3) != 'new')) {
+                  $s2pInfo = new objectInfo($item);
+                }
 
-              if ((zen_not_null($heading)) && (zen_not_null($contents))) {
-                echo '            <td width="25%" valign="top">' . "\n";
-                $box = new box;
-                echo $box->infoBox($heading, $contents);
-                echo '            </td>' . "\n";
-              }
-              ?>
-            </tr>
+                if (isset($s2pInfo) && is_object($s2pInfo) && ($item['s2p_id'] == $s2pInfo->s2p_id)) {
+                  ?>
+                  <tr id="defaultSelected" class="dataTableRowSelected" onclick="document.location.href = '<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $s2pInfo->s2p_id . '&action=edit'); ?>'">
+                  <?php } else { ?>
+                  <tr class="dataTableRow" onclick="document.location.href = '<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $item['s2p_id']); ?>'">
+                  <?php } ?>
+                  <td class="dataTableContent"><?php echo $item['shipment']; ?></td>
+                  <td class="dataTableContent"><?php echo $cPay->GetModuleName($item['payments_allowed']); ?></td>
+                  <td class="dataTableContent text-center">
+                    <?php if ($item['status'] == '1') { ?>
+                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $item['s2p_id'] . '&action=disable'); ?>" class="btn btn-xs btn-success" role="button">&nbsp;</a>
+                    <?php } else { ?>
+                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . $item['s2p_id'] . '&action=enable'); ?>" class="btn btn-xs btn-danger" role="button">&nbsp;</a>
+                    <?php } ?>
+                  </td>
+                  <td class="dataTableContent text-right">
+                    <?php if ((is_object($s2pInfo)) && ($item['s2p_id'] == $s2pInfo->s2p_id)) { ?>
+                      <i class="fa fa-caret-right fa-lg"></i>
+                    <?php } else { ?>
+                      <a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$item['s2p_id']); ?>"><i class="fa fa-info-circle fa-lg"></i></a>
+                    <?php } ?>
+                  </td>
+                </tr>
+              <?php } ?>
+            </tbody>
           </table>
-        </td>
-      </tr>
-    </table>
-  </td>
-  <!-- body_text_eof //-->
-</tr>
-</table>
-<!-- body_eof //-->
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 configurationColumnRight">
+          <?php
+          $heading = array();
+          $contents = array();
+          switch ($action) {
+            case 'new':
+              $heading[] = array('text' => '<h4>' . TEXT_INFO_HEADING_NEW_SHP2PAY . '</h4>');
+              $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $current_page . '&action=insert', 'post', 'class="form-horizontal"'));
+              $contents[] = array('text' => TEXT_INFO_INSERT_INTRO);
+              $contents[] = array('text' => zen_draw_label(TEXT_INFO_SHIPMENT, 'shp_id', 'class="control-label"') . $cShip->shipping_select('name="shp_id" class="form-control"'));
+              $contents[] = array('text' => zen_draw_label(TEXT_INFO_PAYMENTS, 'pay_ids[]', 'class="control-label"') . $cPay->payment_multiselect('name="pay_ids[]" class="form-control"'));
+              $contents[] = array('align' => 'text-center', 'text' => '<button type="submit" class="btn btn-primary">' . IMAGE_INSERT . '</button> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page) . '" class="btn btn-default" role="button">' . IMAGE_CANCEL . '</a>');
+              break;
+            case 'edit':
+              $heading[] = array('text' => '<h4>' . TEXT_INFO_HEADING_EDIT_SHP2PAY . '</h4>');
+              $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id . '&action=save', 'post', 'class="form-horizontal"'));
+              $contents[] = array('text' => TEXT_INFO_EDIT_INTRO);
+              $contents[] = array('text' => zen_draw_label(TEXT_INFO_SHIPMENT, 'shp_id', 'class="control-label"') . $cShip->shipping_select('name="shp_id" class="form-control"', $s2pInfo->shipment));
+              $contents[] = array('text' => zen_draw_label(TEXT_INFO_PAYMENTS, 'pay_ids[]', 'class="control-label"') . $cPay->payment_multiselect('name="pay_ids[]" class="form-control"', $s2pInfo->payments_allowed));
+              $contents[] = array('align' => 'text-center', 'text' => '<button type="submit" class="btn btn-primary">' . IMAGE_UPDATE . '</button> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id) . '" class="btn btn-default" role="button">' . IMAGE_CANCEL . '</a>');
+              break;
+            case 'delete':
+              $heading[] = array('text' => '<h4>' . TEXT_INFO_HEADING_DELETE_SHP2PAY . '</h4>');
+              $contents = array('form' => zen_draw_form('s2p', FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id . '&action=deleteconfirm', 'post', 'class="form-horizontal"'));
+              $contents[] = array('text' => TEXT_INFO_DELETE_INTRO);
+              $contents[] = array('text' => '<br><b>' . $s2pInfo->shipment . ' >> ' . $cPay->GetModuleName($s2pInfo->payments_allowed) . '</b>');
+              $contents[] = array('align' => 'text-center', 'text' => '<button type="submit" class="btn btn-danger">' . IMAGE_DELETE . '</button> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id) . '" class="btn btn-default" role="button">' . IMAGE_CANCEL . '</a>');
+              break;
+            default:
+              if (is_object($s2pInfo)) {
+                $heading[] = array('text' => '<h4>' . $s2pInfo->shipment . '</h4>');
+                $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id . '&action=edit') . '" class="btn btn-primary" role="button">' . IMAGE_EDIT . '</a> <a href="' . zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&s2p_id=' . (int)$s2pInfo->s2p_id . '&action=delete') . '" class="btn btn-warning" role="button">' . IMAGE_DELETE . '</a>');
+                $contents[] = array('text' => '<br>' . TEXT_INFO_PAYMENTS_ALLOWED . '<br><b>' . $cPay->GetModuleName($s2pInfo->payments_allowed) . '</b>');
+              }
+              break;
+          }
 
-<!-- footer //-->
-<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
-<!-- footer_eof //-->
-<br>
-</body>
+          if ((zen_not_null($heading)) && (zen_not_null($contents))) {
+            $box = new box;
+            echo $box->infoBox($heading, $contents);
+          }
+          ?>
+        </div>
+        <table class="table">
+          <tr>
+            <td><?php echo $s2p_split->display_count($s2p_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $current_page, TEXT_DISPLAY_NUMBER_OF_PAYMENTS); ?></td>
+            <td class="text-right"><?php echo $s2p_split->display_links($s2p_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $current_page); ?></td>
+          </tr>
+          <?php if (empty($action)) { ?>
+            <tr>
+              <td class="text-right" colspan="2"><a href="<?php echo zen_href_link(FILENAME_SHIP2PAY, 'page=' . $current_page . '&action=new'); ?>" class="btn btn-primary" role="button"><?php echo IMAGE_INSERT; ?></a></td>
+            </tr>
+          <?php } ?>
+        </table>
+      </div>
+    </div>
+    <!-- body_text_eof //-->
+    <!-- body_eof //-->
+
+    <!-- footer //-->
+    <?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
+    <!-- footer_eof //-->
+  </body>
 </html>
 <?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>

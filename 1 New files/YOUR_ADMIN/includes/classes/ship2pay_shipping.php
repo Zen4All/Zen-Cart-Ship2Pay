@@ -8,34 +8,35 @@ class shipping {
 
   var $modules;
 
-  function __construct() {
+  function __construct()
+  {
 
     if (defined('MODULE_SHIPPING_INSTALLED') && zen_not_null(MODULE_SHIPPING_INSTALLED)) {
       $allmods = explode(';', MODULE_SHIPPING_INSTALLED);
 
-      $this->modules = array();
+      $this->modules = [];
 
       for ($i = 0, $n = sizeof($allmods); $i < $n; $i++) {
         $file = $allmods[$i];
         $class = substr($file, 0, strrpos($file, '.'));
-        $this->modules[$i] = array();
         $this->modules[$i]['class'] = $class;
         $this->modules[$i]['file'] = $file;
       }
     }
   }
 
-  function get_modules() {
+  function get_modules()
+  {
     return $this->modules;
   }
 
-  function shipping_select($parameters, $selected = '') {
-    echo $selected;
+  function shipping_select($parameters, $selected = '')
+  {
     $select_string = '<select ' . $parameters . '>';
     for ($i = 0, $n = sizeof($this->modules); $i < $n; $i++) {
       $select_string .= '<option value="' . $this->modules[$i]['class'] . '"';
       if ($selected == $this->modules[$i]['class']) {
-        $select_string .= ' SELECTED';
+        $select_string .= ' selected';
       }
       $select_string .= '>' . $this->modules[$i]['class'] . '</option>';
     }

@@ -8,12 +8,13 @@ class payment {
 
   var $modules;
 
-  function __construct() {
+  function __construct()
+  {
 
     if (defined('MODULE_PAYMENT_INSTALLED') && zen_not_null(MODULE_PAYMENT_INSTALLED)) {
       $allmods = explode(';', MODULE_PAYMENT_INSTALLED);
 
-      $this->modules = array();
+      $this->modules = [];
 
       for ($i = 0, $n = sizeof($allmods); $i < $n; $i++) {
         $file = $allmods[$i];
@@ -24,11 +25,13 @@ class payment {
     }
   }
 
-  function get_modules() {
+  function get_modules()
+  {
     return $this->modules;
   }
 
-  function payment_multiselect($parameters, $selected = '') {
+  function payment_multiselect($parameters, $selected = '')
+  {
     $arrSelected = explode(';', $selected);
     $select_string = '<select ' . $parameters . ' multiple size="10">';
     for ($i = 0, $n = sizeof($this->modules); $i < $n; $i++) {
@@ -36,7 +39,7 @@ class payment {
       $sClass = $this->modules[$i]['class'];
       $select_string .= '<option value="' . $sFile . '"';
       if (in_array($sFile, $arrSelected)) {
-        $select_string .= ' SELECTED';
+        $select_string .= ' selected';
       }
       $select_string .= '>' . $sClass . '</option>';
     }
@@ -44,9 +47,10 @@ class payment {
     return $select_string;
   }
 
-  function GetModuleName($sSelected) {
-    $sNames = str_replace(".php", "", $sSelected);
-    $sNames = str_replace(";", ",&nbsp;", $sNames);
+  function GetModuleName($sSelected)
+  {
+    $sNames1 = str_replace(".php", "", $sSelected);
+    $sNames = str_replace(";", ",&nbsp;", $sNames1);
     return $sNames;
   }
 

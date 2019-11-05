@@ -1,0 +1,630 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Ship2Pay 1.9.0 for Zen Cart 1.5.6x</title>
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="card bg-light">
+        <div class="card-header">
+          <h1 class="card-title">Ship2Pay 1.9.0</h1>
+          <div class="pos_rel">
+            <div id="downloads">
+              <a class="zip_download_link" href="https://github.com/Zen4All/Zen-Cart-Ship2Pay/archive/master.zip">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Zen4All/Zen-Cart-Ship2Pay/tarball/master">Download this project as a tar.gz file</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="nav nav-tabs" id="Tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="installation-tab" data-toggle="tab" href="#installation" role="tab" aria-controls="installation" aria-selected="false">Installation Instructions</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="setup-tab" data-toggle="tab" href="#setup" role="tab" aria-controls="setup" aria-selected="false">Configuration</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="credits-tab" data-toggle="tab" href="#credits" role="tab" aria-controls="credits" aria-selected="false">Credits & History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="license-tab" data-toggle="tab" href="#license" role="tab" aria-controls="credits" aria-selected="false">License</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="TabContent">
+            <div class="text-right">
+              <a href="https://www.zen-cart.com/showthread.php?213177-Ship2Pay-Support-thread" title="Support Thread" target="_blank" class="btn btn-info" role="button">Support Thread</a>
+              <a href="https://github.com/Zen4All/Zen-Cart-Ship2Pay" title="View on GitHub" target="_blank" class="btn btn-info" role="button">View on GitHub <i class="fa fa-github fa-lg"></i></a>
+            </div>
+            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+              <p>Limit the number of payment options depending on the chosen shipping method. For example When a customer chooses pickup at store he should be able to select cash on pickup or money-order and when he chooses flat rate shipping he should be able to select cash on delivery or moneyorder.</p>
+            </div>
+            <div class="tab-pane fade" id="installation" role="tabpanel" aria-labelledby="installation-tab">
+              <h2>Installation</h2>
+              <ul class="nav nav-tabs" id="TabInstallation" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="new-install-tab" data-toggle="tab" href="#new-install" role="tab" aria-controls="new-install" aria-selected="true">New install</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="upgrade-tab" data-toggle="tab" href="#upgrade" role="tab" aria-controls="upgrade" aria-selected="false">Upgrade</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="un-install-tab" data-toggle="tab" href="#un-install" role="tab" aria-controls="un-install" aria-selected="false">Un-install</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="file-list-tab" data-toggle="tab" href="#file-list" role="tab" aria-controls="file-list" aria-selected="false">File List</a>
+                </li>
+              </ul>
+              <div class="tab-content" id="TabInstallationContent">
+                <div class="tab-pane fade show active" id="new-install" role="tabpanel" aria-labelledby="new-install-tab">
+                  <h3>New install</h3>
+                  <ol>
+                    <li>If you have any versions prior to v1.9.0 installed, please check the upgrade tab for instructions</li>
+                    <li>Un-zip the package to a folder on your computer</li>
+                    <li>Rename the folder "YOUR_ADMIN" to your actual admin folder name.</li>
+                    <li>Copy all files & folders to your server. Below is a list of the files.</li>
+                    <li>Open the file /includes/classes/payment.php<br>
+                      When using Zen Cart 1.5.6c You can skip this step and use the file provided in the folder "Core file overrides"<br>
+                      Find the following line: (about line #29)<br>
+                      <code>
+                        $this->modules = explode(';', MODULE_PAYMENT_INSTALLED);
+                      </code><br>
+                      replace that single line with:<br>
+                      <code>
+                        /* BOF Ship2pay 1 of 2 */<br>
+                        require (DIR_WS_CLASSES . 'ship2pay.php');<br>
+                        $my_ship2pay = new ship2pay;<br>
+                        $arrship = explode('_', $_SESSION['shipping']['id']);<br>
+                        $ship2pay_mods = $my_ship2pay->get_pay_modules($arrship[0]);<br>
+                        if (zen_not_null($ship2pay_mods)) {<br>
+                        &nbsp;&nbsp;$this->modules = explode(';', $ship2pay_mods);<br>
+                        } else {<br>
+                        &nbsp;&nbsp;/* EOF ship2pay 1 of 2 */<br>
+                        &nbsp;&nbsp;$this->modules = explode(';', MODULE_PAYMENT_INSTALLED);<br>
+                        &nbsp;&nbsp;/* BOF Ship2pay 2 of 2 */<br>
+                        }<br>
+                        /* EOF ship2pay 2 of 2 */<br>
+                      </code>
+                    </li>
+                  </ol>
+                </div>
+                <div class="tab-pane fade" id="upgrade" role="tabpanel" aria-labelledby="upgrade-tab">
+                  <h3>Upgrade</h3>
+                  <p>Use the list of files in the installation tab for comparison with your current installation, to see if any files have been added, or removed formthe package.<br>The easiest way is to use a file comparison program like Beyond Compare, or Winmerge.</p>
+                </div>
+                <div class="tab-pane fade" id="un-install" role="tabpanel" aria-labelledby="un-install-tab">
+                  <h3>Un-install</h3>
+                  <ul>
+                    <li>Delete all the files from your server. Use the file list as your guid to see which files to delete.</li>
+                    <li>Run the uninstall.sql in "Tools => Install SQL Patches" of your Zen Cart admin panel</li>
+                  </ul>
+                </div>
+                <div class="tab-pane fade" id="file-list" role="tabpanel" aria-labelledby="file-list-tab">
+                  <h3>File List</h3>
+                  <table class="dc" cellspacing="0" cellpadding="0">
+                    <thead>
+                      <tr class="SectionAll">
+                        <th class="DirItemHeader">Version 1.8.0</th>
+                        <th class="DirItemHeader"></th>
+                        <th class="DirItemHeader">Version 1.9.0</th>
+                        <th class="DirItemHeader">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="SectionBegin">
+                        <td class="DirItemDefault"><i class="fa fa-folder-open DirOlderExpanded"></i> 1 New files</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><i class="fa fa-folder-open DirNewerOrphanExpanded"></i> 1 New files</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">├</span><i class="fa fa-folder-open DirOlderExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">├</span><i class="fa fa-folder-open DirNewerExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">│├</span><i class="fa fa-folder-open DirOlderExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">│├</span><i class="fa fa-folder-open DirNewerExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">││└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">││└</span>ship2pay.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">│└</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_datafiles</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">│└</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_datafiles</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemSame"><span class="text-black">│&nbsp;└</span>ship2pay_database_names.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentSame.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemSame"><span class="text-black">│&nbsp;└</span>ship2pay_database_names.php</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">└</span><i class="fa fa-folder-open DirOlderExpanded"></i> YOUR_ADMIN</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">└</span><i class="fa fa-folder-open DirNewerOrphanExpanded"></i> YOUR_ADMIN</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;├</span><i class="fa fa-folder-open DirOlderExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;├</span><i class="fa fa-folder-open DirNewerOrphanExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirOrphanExpanded"></i> auto_loaders</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││&nbsp;</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemOrphan"><span class="text-black">&nbsp;││└</span>config.ship2pay.php</td>
+                        <td class="DirItemDefault">New</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirOlderExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirNewerExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;││├</span>ship2pay_payment.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;││├</span>ship2pay_payment.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;││└</span>ship2pay_shipping.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;││└</span>ship2pay_shipping.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_datafiles</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_datafiles</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemSame"><span class="text-black">&nbsp;││├</span>ship2pay_database_names.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentSame.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemSame"><span class="text-black">&nbsp;││├</span>ship2pay_database_names.php</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemSame"><span class="text-black">&nbsp;││└</span>ship2pay_filenames.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentSame.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemSame"><span class="text-black">&nbsp;││└</span>ship2pay_filenames.php</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirOrphanExpanded"></i> init_includes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││&nbsp;</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemOrphan"><span class="text-black">&nbsp;││└</span>init_ship2pay.php</td>
+                        <td class="DirItemDefault">New</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│├</span><i class="fa fa-folder-open DirOrphanExpanded"></i> installers</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││&nbsp;</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││└</span><i class="fa fa-folder-open DirOrphanExpanded"></i> ship2pay</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││&nbsp;&nbsp;</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemOrphan"><span class="text-black">&nbsp;││&nbsp;├</span>1_8_0.php</td>
+                        <td class="DirItemDefault">New</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;││&nbsp;&nbsp;</span></td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemOrphan"><span class="text-black">&nbsp;││&nbsp;└</span>1_9_0.php</td>
+                        <td class="DirItemDefault">New</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│└</span><i class="fa fa-folder-open DirOlderExpanded"></i> languages</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│└</span><i class="fa fa-folder-open DirNewerExpanded"></i> languages</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;├</span><i class="fa fa-folder-open DirOlderExpanded"></i> dutch</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;├</span><i class="fa fa-folder-open DirNewerExpanded"></i> dutch</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;│├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_definitions</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;│├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_definitions</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemSame"><span class="text-black">&nbsp;│&nbsp;││└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentSame.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemSame"><span class="text-black">&nbsp;│&nbsp;││└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;│&nbsp;│└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;│&nbsp;│└</span>ship2pay.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;└</span><i class="fa fa-folder-open DirOlderExpanded"></i> english</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;└</span><i class="fa fa-folder-open DirNewerExpanded"></i> english</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;&nbsp;├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_definitions</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;│&nbsp;&nbsp;├</span><i class="fa fa-folder-open DirSameExpanded"></i> extra_definitions</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemSame"><span class="text-black">&nbsp;│&nbsp;&nbsp;│└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentSame.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemSame"><span class="text-black">&nbsp;│&nbsp;&nbsp;│└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;│&nbsp;&nbsp;└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;│&nbsp;&nbsp;└</span>ship2pay.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;└</span>ship2pay.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;└</span>ship2pay.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><i class="fa fa-folder-open DirOlderExpanded"></i> 2 Core file overrides</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><i class="fa fa-folder-open DirNewerExpanded"></i> 2 Core file overrides</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">└</span><i class="fa fa-folder-open DirOlderExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">└</span><i class="fa fa-folder-open DirNewerExpanded"></i> includes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionMiddle">
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;└</span><i class="fa fa-folder-open DirOlderExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                        <td class="DirItemDefault"><span class="text-black">&nbsp;└</span><i class="fa fa-folder-open DirNewerExpanded"></i> classes</td>
+                        <td class="DirItemDefault"></td>
+                      </tr>
+                      <tr class="SectionEnd">
+                        <td class="DirItemOlder"><span class="text-black">&nbsp;&nbsp;└</span>payment.php</td>
+                        <td class="DirItemDefault"><img src="images/ContentDifferent.png" width="28" height="16" alt="<CC>" align="middle"></td>
+                        <td class="DirItemNewer"><span class="text-black">&nbsp;&nbsp;└</span>payment.php</td>
+                        <td class="DirItemDefault">Updated</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="setup" role="tabpanel" aria-labelledby="setup-tab">
+              <h2>Configuring Ship2pay</h2>
+              <ul>
+                <li>After installation, go to the admin > modules and click on ship 2 pay</li>
+                <li>Insert your links between shipping and payment.</li>
+              </ul>
+              <p>If you don't specify any link, the code will work as before.</p>
+            </div>
+            <div class="tab-pane fade" id="credits" role="tabpanel" aria-labelledby="credits-tab">
+              <h2>Version History</h2>
+              <table>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.9</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>5-11-2019</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>1.5.6</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td><a href="https://zen4all.nl" target="_blank">Zen4All</a></td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>Updated: "includes\classes\payment.php" to Zen Cart 1.5.6c, and added better comment</li>
+                      <li>Updated: "YOUR_ADMIN\includes\classes\ship2pay.php" to use foreach instead of while</li>
+                      <li>Updated: "YOUR_ADMIN\includes\classes\ship2pay_payment.php" minor changes</li>
+                      <li>Updated: "YOUR_ADMIN\includes\classes\ship2pay_shipping.php" minor changes</li>
+                      <li>Updated: "YOUR_ADMIN\includes\languages\dutch\ship2pay.php" Improved translation</li>
+                      <li>Updated: "YOUR_ADMIN\includes\languages\english\ship2pay.php" Improved translation</li>
+                      <li>Updated: "YOUR_ADMIN\ship2pay.php" Major overhaul. Improved styling, making use of bootstrap. Code clean-up</li>
+                      <li>Added auto-installer for datbase edits</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.8</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>13-07-2017</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>tested on: Zen Cart 1.5.5, but should work on all 1.5.x distributions.</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td><a href="https://zen4all.nl" target="_blank">Zen4All</a></td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>Fixed bug in install.sql</li>
+                      <li>Updated files to be compatible with php 7.0</li>
+                      <li>Removed Polish language files, because I am not able to provide support for them.</li>
+                      <li>Updated control panel file</li>
+                      <li>Added Zen Cart 1.5.5e overwrite file for "includes/classes/payment.php"</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.7</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>24-06-2014</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>tested on: Zen Cart 1.5.x</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td><a href="https://zen4all.nl" target="_blank">Zen4All</a></td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>Admin language files have been updated, to prevent the module title form showing up in other locations then this module</li>
+                      <li>changed: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php</li>
+                      <li>added: YOUR_ADMIN/includes/languages/YOUR_LANGUAGE/extra_definitions/ship2pay.php</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.6</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>02-05-2014</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>tested on: Zen Cart 1.5.x</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td><a href="https://zen4all.nl" target="_blank">Zen4All</a></td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>added: datafiles for database</li>
+                      <li>added: datafiles for filenames</li>
+                      <li>removed: unused variables $language, $PHP_SELF,$shipment,$GLOBALS from /includes/classes/ship2pay.php</li>
+                      <li>removed: admin/image/icons/icon_status_green_light.gif It was not used in this module. instead the default present admin/image/icon_status_green_light.gif is used)</li>
+                      <li>renamed: /admin/includes/classes/shipping.php to /admin/includes/classes/ship2pay_shipping.php<br>
+                        /admin/includes/classes/payment.php to /admin/includes/classes/ship2pay_payment.php<br>
+                        this way it is easier to spot module specific files</li>
+                      <li>updated: admin/ship2pay.php code cleaning so it is up to Zen Cart 1.5.1 standard</li>
+                      <li>updated: install.sql A statement was added so a link is added to the Modules menu</li>
+                      <li>updated: installation instructions</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.5.2</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>1-11-2012</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>tested on: Zen Cart Version 1.3.9h</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td>fdeboer</td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>added: dutch language definitions</li>
+                      <li>fixed: obsolete $HTTP_GET/POST_VARS with $_GET/_POST</li>
+                      <li>fixed: admin button image links</li>
+                      <li>modified: moved language file to extra_definitions folder and merged manual language definitions from install into the language file.</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.5.1</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>19-07-2008</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>1.3.8</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td>wladimirec</td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>
+                    <ul>
+                      <li>fixed: undefined function calling in:<br>
+                        /admin/includes/classes/shipping.php<br>
+                        /admin/includes/classes/payment.php</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <hr>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Version: </td>
+                  <td>&nbsp;</td>
+                  <td>1.5</td>
+                </tr>
+                <tr>
+                  <td>Release Date: </td>
+                  <td>&nbsp;</td>
+                  <td>27-06-2008</td>
+                </tr>
+                <tr>
+                  <td>Zen Cart Versions: </td>
+                  <td>&nbsp;</td>
+                  <td>1.3.8</td>
+                </tr>
+                <tr>
+                  <td>Author: </td>
+                  <td>&nbsp;</td>
+                  <td>wladimirec</td>
+                </tr>
+                <tr>
+                  <td>Changes: </td>
+                  <td>&nbsp;</td>
+                  <td>based on : osCommerce, Open Source E-Commerce Solutions http://www.oscommerce.com Copyright (c) 2003 Edwin Bekaert (edwin@ednique.com)
+                    <ul>
+                      <li>modified to zen cart distribution by wladimirec</li>
+                      <li>Included English and Polish language.</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="tab-pane fade" id="license" role="tabpanel" aria-labelledby="license-tab">
+              <ul>
+                <li>License: GPL 2.0 as per included <a href="../LICENSE" target="_blank">LICENSE</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer text-sm-center">Copyright 2019 <a href="https://zen4all.nl" target="_blank">Zen4All</a></div>
+      </div>
+    </div>
+    <script src="jscript/jquery-3.3.1.min.js"></script>
+    <script src="jscript/popper.min.js"></script>
+    <script src="jscript/bootstrap.min.js"></script>
+  </body>
+</html>
