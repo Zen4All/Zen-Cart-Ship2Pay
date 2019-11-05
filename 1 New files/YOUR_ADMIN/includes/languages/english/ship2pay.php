@@ -9,7 +9,7 @@ define('HEADING_TITLE', 'Ship 2 Pay');
 
 define('TABLE_HEADING_ACTION', 'Action');
 define('TEXT_INFO_EDIT_INTRO', 'Please make any necessary changes');
-define('TEXT_INFO_INSERT_INTRO', 'Please enter the new tax class with its related data');
+define('TEXT_INFO_INSERT_INTRO', 'Please select the payment method(s) you want to use with the selected shipping module');
 define('TEXT_INFO_DELETE_INTRO', 'Are you sure you want to delete this ?');
 define('TABLE_HEADING_SHIPMENT', 'Shipment');
 define('TABLE_HEADING_PAYMENTS', 'Payments Allowed');
